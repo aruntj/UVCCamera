@@ -165,3 +165,54 @@ Add new sample app `usbCameraTest8` to show how to set/get uvc control like brig
 ### 2017/04/17
 Add new sample app on [OpenCVwithUVC](https://github.com/saki4510t/OpenCVwithUVC.git) repository.
 This shows the way to pass video images from UVC into `cv::Mat` (after optional applying video effect by OpenGL|ES) and execute image processing by `OpenCV`.
+
+
+Modified Installation Steps
+=========
+1. Install Android studio
+
+2. Install Andoid SDK (I've used 27 - Oreo 8.1 - need this for android support tools 27.1.1 compatibility):
+    2.1. Tools > SDK Manager > SDK Platform -- choose Oreo 8.1
+    2.2. Install NDK Tools > SDK Manager > SDK Tools -- choose LLDB and NDK
+    2.3. Click apply and wait for download and sync to complete.
+3. Clone project - https://github.com/saki4510t/UVCCamera.git
+
+4. Open Android Studio > New > Import project > choose the UVCCamera directory.      
+
+5. Update the target SDK in gradle (UVCCamera build.gradle):
+    in the ext section  
+    5.1. supportLibVersion = '27.1.1'
+    5.2. versionBuildTool = '27.0.3'
+    5.3. Introduce a new variable minSDKVersion = 27
+    5.4. Update the minSdkVersion in the defaultConfig section in all the sub modules to minSdkVersion minSDKVersion to use the new variable
+    5.5. Sync gradle.
+
+6. Update the Android support library version to match the sdk for libuvccamera:
+    6.1. in libuvccamera/build.gradle update the dependency section to :
+    dependencies {
+            compile fileTree(dir: new File(buildDir, 'libs'), include: '*.jar')
+            compile "com.android.support:support-core-utils:${supportLibVersion}"
+            compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+            compile("com.serenegiant:common:${commonLibVersion}") {
+                exclude module: 'support-v4'
+	    }
+    }
+
+7. Update Application.mk UVCCamera > libuvccamera > src > main > jni > Application.mk
+    Update the varaibles:
+    APP_PLATFORM := android-27
+    APP_ABI := all 
+
+8. cd to libuvccamera sub module and run gradle build. Some how running it from Anroid studio doesn't work. (You might have to install gradle 3.14 - brew install gradle)
+
+9. Make project - Build > Make project. Wait for completion.
+
+10. Select sub project from run menu click run. 
+    10.1. Do not use adb for now choose android emulator.
+    10.2. Install the virtual machine for the phone of your choice when prompted.
+    10.3. Update the haxm for mac when prompted.
+    10.4. Wait for install and the app should show up on the screen.
+
+
+
+
